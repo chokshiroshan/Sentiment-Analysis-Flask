@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Sentiment Analysis</title>
+		<link rel="icon" href="{{ url_for('static',filename='img/favicon.ico') }}" type="image/x-icon" />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel=stylesheet type='text/css' href="{{ url_for('static', filename='css/main.css') }}"/>
+        <link rel=stylesheet type='text/css' href="{{  url_for('static',filename='font-awesome-4.7.0/css/font-awesome.min.css') }}"/>
+        <link rel=stylesheet type='text/css' href="{{ url_for('static', filename='css/custom.css') }}"/>
+	</head>
+<style>
+/* Center the loader */
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 10;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 }
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom {
+  from{ bottom:-100px; opacity:0 }
+  to{ bottom:0; opacity:1 }
+}
+#backdiv {
+	position:absolute;
+    background-color: rgba(93, 91, 86, 0.58);
+    width: 100%;
+    height:100%;
+}
+
+</style>
+
+	<body>
+		<!-- Header -->
+			<header id="header">
+				<div class="inner">
+					<centre><a href="https://www.instagram.com/roshan.py/" class="logo">A <strong>Design Engineering</strong> Project</a></centre>
+					<nav id="nav">
+						<a href="">Home</a>
+					</nav>
+				</div>
+			</header>
+
+		<!-- Banner -->
+			<section id="banner" style="background-image:url(/static/img/abanner.jpg)">
+				<div class="inner">
+					<header>
+						<h1>Sentiment Analysis</h1><div id="loader" style="display: none;"></div>
+					</header>
+
+					
+
+					<footer>
+						<p style="padding-bottom: 5%;"> The Dynamic Voice of Society Today</p>
+
+						<form method="get" action="main" onsubmit="disableElements();">
+						<div style="margin-right:30%; margin-left:30%;">
+							<div class="row uniform" >
+								<div class="9u 12u$(small)">
+									<input type="text" name="query" id="query" value="" placeholder="Start With a HashTag..." required/>
+								</div>
+								<div class="3u$ 12u$(small)">
+									<input type="submit" id="start_btn" value="Search" class="fit" />
+								</div>
+							</div>
+						</div>
+						</form>
+					</footer>
+				</div>
+			</section>
+
+
+		<!-- Three -->
+			<section id="about" class="wrapper align-center" style="margin-top:-5%;">
+				<div class="inner">
+					<header>
+						<h2>About</h2>
+						<p>About The Project</p>
+					</header>
+
+					<strong>What is sentiment analysis?<br />
+</strong>Sentiment Analysis is the process of &#8216;computationally&#8217; determining whether a piece of writing is positive, negative or neutral. It’s also known as <strong>opinion mining</strong>, deriving the opinion or attitude of a speaker.</p>
+<p><strong>Why sentiment analysis?</strong></p>
+					<ul>
+<li><strong>Business: </strong>In marketing field companies use it to develop their strategies, to understand customers’ feelings towards products or brand, how people respond to their campaigns or product launches and why consumers don’t buy some<br />
+products.</li>
+<li><strong>Politics: </strong>In political field, it is used to keep track of political view, to detect consistency and inconsistency between statements and actions at the government level. It can be used to predict election results as well!</li>
+<li><strong>Public Actions: </strong>Sentiment analysis also is used to monitor and analyse social phenomena, for the spotting of potentially dangerous situations and determining the general mood of the blogosphere.</li>
+</ul>
+					<header>
+						<p>About The Developer</p>
+						<p>Find me on my portfolio website here: <a href="https://instagram.com/roshan.py"> Portfolio - Roshan Chokshi</a></p>
+					</header>
+					<ul class="icons" style="text-align:center;margin-bottom:-5%;margin-top:-3%;">
+
+						<li><a href="https://github.com/chokshiroshan" class="icon fa-github"><span class="label">Github</span></a></li>
+						<li><a href="https://instagram.com/roshan.py" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+
+					</ul>
+				</div>
+			</section>
+
+
+
+		<!-- Scripts -->
+			<script src="/static/js/jquery.min.js"></script>
+			<script src="/static/js/skel.min.js"></script>
+			<script src="/static/js/util.js"></script>
+			<script src="/static/js/main.js"></script>
+
+
+
+
+
+	</body>
+
+
+
+</html>

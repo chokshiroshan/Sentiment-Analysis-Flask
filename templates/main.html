@@ -1,0 +1,507 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Main Page</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="icon" href="{{ url_for('static',filename='img/favicon.ico') }}" type="image/x-icon" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+    body {
+     margin:0;
+     padding:0;
+     background-color: #8b46fe;
+    }
+    .choice{
+        padding-bottom: 5%;
+    }
+    .btnn {
+        background: #222110 no-repeat 9px center;
+        border: solid 1px black;
+        padding-top: 5px;
+        padding-bottom: 5px!important;
+        width: 100%;
+        -webkit-border-radius: 10em;
+        -moz-border-radius: 10em;
+        border-radius: 10em;
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+        padding-bottom: 2%;
+    }
+    .btnn:hover{
+        background-color: black;
+        color: white !important;
+    }
+
+
+    #block_type1{
+
+      background-color: #8b46fe;
+      border-radius: 5px;
+      text-align: center;
+      border: cadetblue 1px solid;
+    }
+    #block_type2{
+
+      background-color: #8b46fe;
+      border-radius: 5px;
+      text-align: center;
+      border: cadetblue 1px solid;
+    }
+	.row{
+		border: grey 1px dashed;
+		margin: 0px !important;
+	}
+	
+    input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    }
+    #search {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    }
+    #search:hover {
+    background-color: #45a049;
+    }
+    .tweets_list {
+    background: #DEE5E9;
+        height: 45%;
+        overflow-y: scroll;
+
+    }
+	.links{
+		color: crimson !important;
+	}
+    </style>
+
+    <style>
+/* Center the loader */
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 }
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom {
+  from{ bottom:-100px; opacity:0 }
+  to{ bottom:0; opacity:1 }
+}
+
+#backdiv {
+	position:absolute;
+    background-color: rgba(93, 91, 86, 0.58);
+    width: 100%;
+    height:100%;
+}
+</style>
+
+</head>
+<body>
+
+    <div id="loader" style="display: none"></div>
+
+	<div class='row', style='height: 30px; background-color: black;margin-left: 20px;'>
+		<h5 style="color: #ffffff;text-align: center" id="capture">Sentimental Analysis - #{{ data['name'] }}</h5>
+	</div>
+
+
+	<div class="row" style="">
+      <div class="col-sm-3" id="block_type1" ><canvas id="data_representation1" width="250%" height="200%"></canvas></div>
+      <div class="col-sm-3" id="block_type1" ><canvas id="data_representation2" width="250%" height="200%"></canvas></div>
+      <div class="col-sm-6" id="block_type1" ><canvas id="data_representation3" width="600px" height="250px"></canvas></div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3" id="block_type2" >
+            <div style="text-align: left; margin-left: 15px;margin-top: 15px">
+                <form action="main" method="get">
+                <label for="hashtag_text" style="color: #ffffff;margin-left: 5px;">Hastag Search</label><br>
+                <input type="text" id="hashtag_text" name="query" placeholder="Your HashTag.."><br>
+                <button type="submit" onclick="showLoading();" id="search" >Search</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-5" id="block_type2" >
+
+            <h2 style='color: white;font-family: sans-serif;'> Compare with ...</h2>
+            <div class="row" style='padding-top: 10px; padding-bottom: 10px;'>
+                <form action="compare" method="get">
+                    <div class="col-sm-6 col-sm-offset-1 col-sm-pull-1">
+
+                    {% for choice in similar %}
+                        <div class="choice">
+                            <input type="submit" onclick="clearText(); showLoading();" name="btn" class="btnn" style="color: grey" value="{{ choice }}" />
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <div class="col-sm-4">
+                        <h3 style='color: white;font-family: sans-serif;'>Or Enter Your Own:</h3>
+                        <input type="text" id="comp_data" name="comp_data">
+                        <input type="hidden" id="query" name="query" value="0">
+                        <input type="submit" onclick="clearBtn();showLoading();" class="btnn" style="color: grey">
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-4" id="block_type2" >
+            <div class="w3-bar">
+              <button id="btn_all" class="w3-bar-item w3-button w3-teal" style="width:33.3%" onclick="showAllTweet();">All</button>
+              <button id="btn_pos" class="w3-bar-item w3-button w3-black" style="width:33.3%" onclick="showPosTweet();">Positive</button>
+              <button id="btn_neg" class="w3-bar-item w3-button w3-black" style="width:33.3%" onclick="showNegTweet();">Negative</button>
+            </div>
+
+
+            <div id="all_tweets_list" class="tweets_list">
+                {% for item_out in data['tweets']|reverse %}
+                    {% for item_in in item_out|reverse %}
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <img src="{{ url_for('static',filename='img/twitter_icon.png') }}" alt="logo">
+                        </div>
+                        <div class="col-sm-10" style="text-align: left; word-wrap: break-word;">
+                            <span style="color: crimson;font-weight:bold;font-size: large" id="tweet_created_by"><a class='links' href="{{ item_in['link'] }}">{{ item_in['username'] }} </a> </span>
+                            <span style="color: #464a4c;margin-left: 10px; color: grey;" id="tweet_created_on" class="tweet_created_on">{{ item_in['date'] }}</span>
+                            <p style="color: #464a4c;margin-left: 10px;" id="tweet_text">{{ item_in['text'] }}</p>
+
+                        </div>
+                </div>
+                {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div id="pos_tweets_list" class="tweets_list" style="display: none;">
+                {% for item_out in data['tweets']|reverse %}
+                    {% for item_in in item_out|reverse %}
+                    {% if item_in['inference'] == 'Positive' %}
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <img src="{{ url_for('static',filename='img/twitter_icon.png') }}" alt="logo">
+                        </div>
+                        <div class="col-sm-10" style="text-align: left; word-wrap: break-word;">
+                            <span style="color: crimson;font-weight:bold;font-size: large" id="tweet_created_by"><a class='links' href="{{ item_in['link'] }}">{{ item_in['username'] }} </a> </span>
+                            <span style="color: #464a4c;margin-left: 10px; color: grey;" id="tweet_created_on" class="tweet_created_on">{{ item_in['date'] }}</span>
+                            <p style="color: #464a4c;margin-left: 10px;" id="tweet_text">{{ item_in['text'] }}</p>
+
+                        </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div id="neg_tweets_list" class="tweets_list" style="display: none;">
+                {% for item_out in data['tweets']|reverse %}
+                    {% for item_in in item_out|reverse %}
+                {% if item_in['inference'] == 'Negative' %}
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <img src="{{ url_for('static',filename='img/twitter_icon.png') }}" alt="logo">
+                        </div>
+                        <div class="col-sm-10" style="text-align: left; word-wrap: break-word;">
+                            <span style="color: crimson;font-weight:bold;font-size: large" id="tweet_created_by"><a class='links' href="{{ item_in['link'] }}">{{ item_in['username'] }} </a> </span>
+                            <span style="color: #464a4c;margin-left: 10px; color: grey;" id="tweet_created_on" class="tweet_created_on">{{ item_in['date'] }}</span>
+                            <p style="color: #464a4c;margin-left: 10px;" id="tweet_text">{{ item_in['text'] }}</p>
+
+                        </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+
+
+        </div>
+      </div>
+
+
+    <script type="text/javascript" language="JavaScript">
+
+    var str_data = '{{ data | tojson | safe  }}' ;
+    var json_data = JSON.parse(str_data) ;
+
+     Chart.pluginService.register({
+     beforeDraw: function (chart) {
+    if (chart.config.options.elements.center) {
+      //Get ctx from string
+      var ctx = chart.chart.ctx;
+
+      //Get options from the center object in options
+      var centerConfig = chart.config.options.elements.center;
+      var fontStyle = centerConfig.fontStyle || 'Arial';
+      var txt = centerConfig.text;
+      var color = centerConfig.color || '#000';
+      var sidePadding = centerConfig.sidePadding || 20;
+      var sidePaddingCalculated = (sidePadding/100) * (chart.innerRadius * 2)
+      //Start with a base font of 30px
+      ctx.font = "30px " + fontStyle;
+
+      //Get the width of the string and also the width of the element minus 10 to give it 5px side padding
+      var stringWidth = ctx.measureText(txt).width;
+      var elementWidth = (chart.innerRadius * 2) - sidePaddingCalculated;
+
+      // Find out how much the font can grow in width.
+      var widthRatio = elementWidth / stringWidth;
+      var newFontSize = Math.floor(30 * widthRatio);
+      var elementHeight = (chart.innerRadius * 2);
+
+      // Pick a new font size so it will not be larger than the height of label.
+      var fontSizeToUse = Math.min(newFontSize, elementHeight);
+
+      //Set font settings to draw it correctly.
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      var centerX = ((chart.chartArea.left + chart.chartArea.right) / 2);
+      var centerY = ((chart.chartArea.top + chart.chartArea.bottom) / 2);
+      ctx.font = fontSizeToUse+"px " + fontStyle;
+      ctx.fillStyle = color;
+
+      //Draw text in center
+      ctx.fillText(txt, centerX, centerY);
+    }
+  }
+});
+
+    var pieData1 = {
+      labels: [
+        "Positive",
+        "Neutral",
+        "Negative"
+    ],
+    datasets: [
+        {
+            data: [json_data['total_pos'], json_data['total_neu'], json_data['total_neg']],
+            backgroundColor: [
+                "#FF8153",
+                "#4ACAB4",
+                "#878BB6"
+            ]
+        }]
+    };
+
+    var options1 = {
+        responsive: true,
+        title: {
+            display: true,
+            position: "top",
+            text: "Categorical Segmentation",
+            fontSize: 18,
+            fontColor: "#ffffff"
+        },
+        legend: {
+            display: true,
+            labels: {
+                fontColor: 'rgb(255, 255, 255)'
+            }
+        }
+    };
+
+    var data_representation1= document.getElementById("data_representation1").getContext("2d");
+    new Chart(data_representation1, {
+    type: 'doughnut',
+    data: pieData1,
+    options: options1
+    });
+
+    var pieData2 = {
+      labels: [
+        "% Popularity",
+          "% Notoriety"
+    ],
+    datasets: [
+        {
+            data: [(json_data['avg_pos']*100).toFixed(2), (json_data['avg_neg']*100).toFixed(2)],
+            backgroundColor: [
+                "#FF8153",
+                "#8b46fe"
+            ]
+        }]
+    };
+
+    var options2 = {
+        responsive: true,
+        title: {
+            display: true,
+            position: "top",
+            text: "Popularity",
+            fontSize: 18,
+            fontColor: "#ffffff"
+        },
+        legend: {
+            display: true,
+            labels: {
+                fontColor: 'rgb(255, 255, 255)'
+            }
+        },
+        elements: {
+          center: {
+          text: Math.round(json_data['avg_pos']*100) + '%',
+          color: '#ffffff', //Default black
+          fontStyle: 'Helvetica', //Default Arial
+          sidePadding: 30 //Default 20 (as a percentage)
+        }
+      }
+    };
+
+    var data_representation2 = document.getElementById("data_representation2").getContext("2d");
+    new Chart(data_representation2, {
+    type: 'doughnut',
+    data: pieData2,
+    options: options2
+    });
+
+    new Chart(document.getElementById("data_representation3"), {
+    type: 'line',
+    data: {
+    labels: json_data['dates'],
+    datasets: [{
+        data: json_data['pos_line_data'],
+        label: "Positive",
+        borderColor: "#FF8153",
+        fill: false
+      }, {
+        data: json_data['neg_line_data'],
+        label: "Negative",
+        borderColor: "#4ACAB4",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: 'Sentiment Analysis'
+    }
+  }
+});
+
+    </script>
+
+
+    <script>
+        function showLoading(){
+            document.getElementById("loader").style.display = "block";
+        }
+        function hideLoading(){
+            document.getElementById("loader").style.display = "none";
+        }
+    </script>
+
+    <script>
+        function showAllTweet() {
+            document.getElementById("all_tweets_list").style.display = "block";
+            document.getElementById("pos_tweets_list").style.display = "none";
+            document.getElementById("neg_tweets_list").style.display = "none";
+            document.getElementById("btn_all").classList.remove('w3-black');
+            document.getElementById("btn_all").classList.add('w3-teal');
+
+            document.getElementById("btn_pos").classList.remove('w3-teal');
+            document.getElementById("btn_pos").classList.add('w3-black');
+            document.getElementById("btn_neg").classList.remove('w3-teal');
+            document.getElementById("btn_neg").classList.add('w3-black');
+        }
+        function showPosTweet() {
+            document.getElementById("all_tweets_list").style.display = "none";
+            document.getElementById("pos_tweets_list").style.display = "block";
+            document.getElementById("neg_tweets_list").style.display = "none";
+            document.getElementById("btn_pos").classList.remove('w3-black');
+            document.getElementById("btn_pos").classList.add('w3-teal');
+
+            document.getElementById("btn_all").classList.remove('w3-teal');
+            document.getElementById("btn_all").classList.add('w3-black');
+            document.getElementById("btn_neg").classList.remove('w3-teal');
+            document.getElementById("btn_neg").classList.add('w3-black');
+        }
+        function showNegTweet() {
+            document.getElementById("all_tweets_list").style.display = "none";
+            document.getElementById("pos_tweets_list").style.display = "none";
+            document.getElementById("neg_tweets_list").style.display = "block";
+            document.getElementById("btn_neg").classList.remove('w3-black');
+            document.getElementById("btn_neg").classList.add('w3-teal');
+
+            document.getElementById("btn_pos").classList.remove('w3-teal');
+            document.getElementById("btn_pos").classList.add('w3-black');
+            document.getElementById("btn_all").classList.remove('w3-teal');
+            document.getElementById("btn_all").classList.add('w3-black');
+        }
+
+        function clearBtn(){
+            var elems = document.getElementsByClassName('btnn');
+
+            for(var i=0; i < elems.length; i++){
+                elems[i].value = '';
+                //console.log(elems[i].valueOf());
+            }
+
+            // Also get the value of the query to pass to the next page
+            document.getElementById('query').value = document.getElementById('capture').innerText.slice(24);
+
+        }
+
+        function clearText(){
+            var elem = document.getElementById('comp_data');
+            elem.value = '';
+            document.getElementById('query').value = document.getElementById('capture').innerText.slice(24);
+
+        }
+
+        // local storage
+
+        var t1 = '{{ data | tojson | safe  }}'
+        var obj = JSON.parse(t1)
+        localStorage.setItem(obj.name, t1);
+
+
+    </script>
+
+
+</body>
